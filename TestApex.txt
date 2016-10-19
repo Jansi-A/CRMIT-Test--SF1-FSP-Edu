@@ -1,0 +1,27 @@
+public class EventRelatedDetails {
+    
+    /* 
+     * Get all Events/Appointments for the Current User which are not Closed
+     */
+     
+    @AuraEnabled
+    public static List<Event> getAllNonClosedEventsFortheLoggedInUser(){
+        
+        System.debug('getAllMyEvents -- START');
+		//-- Declare Variables
+		List<Event> listOfEvents = new List<Event>();
+        try{
+        }catch(DMLException dmlExec){
+            System.debug('Error occured while quering Lead object :  '+dmlExec);
+        }catch(Exception exec){
+            System.debug('Error occured while quering Lead object :  '+exec);
+        }
+        //-- Getting the logged In User Id
+        String currentUser =UserInfo.getUserId();
+        
+        System.debug('Current User =='+ UserInfo.getUserId());
+        
+        //-- Query Event object to get Events for logged In user, whose Status!=Closed and ascending by Event StartDate and time
+        return [select id,Subject,Description,whoId,whatId,StartDateTime,EndDateTime, Location from Event WHERE OwnerId=:currentUser and Status__c!='Closed' ORDER BY StartDateTime ASC NULLS LAST]; // DESC LastModifiedDate
+      }
+	  }
